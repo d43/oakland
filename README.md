@@ -8,13 +8,17 @@ CREATE DATABASE oakland;
 <p>
 Next steps:
 <p>
-Load in Data
+Load in Data (Crime, census block)
 <p>
 Subdivide by census block
 <p>
 Check density
 <p>
+Check density OVER TIME
+<p>
 Check out kriging, other ways of spatio correlation
+<p>
+CrimeCat problems
 <p>
 time series each block, ARIMA/(S)ARIMA
 <p>

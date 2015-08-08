@@ -1,6 +1,6 @@
 def crime_dict(df):
     d = {}
-    for col in df.CrimeCat.unique()[1:]:
+    for col in df.CrimeCat.unique():
         if col.find("ASSAULT") == 0:
             d[col] = "VIOLENT"
         elif col.find("ROBBERY") == 0:

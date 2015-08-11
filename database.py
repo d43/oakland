@@ -1,7 +1,7 @@
 import psycopg2
 import pandas as pd
-from crime_dict import crime_dict
 from subprocess import call
+from preprocessing_crime import pre_process
 import os
 
 def create_database(db_name='oakland'):
@@ -60,15 +60,10 @@ def create_crime_table():
 	'''
 	print "preprocessing data..."
 	cdf = pd.read_csv("data/OPD_150308.csv")
-	cdf.Date = pd.to_datetime(cdf.Date)
-	cdf['Year'] = pd.DatetimeIndex(cdf.Date).year
-	cdf['Year_Month'] = cdf.Date.map(lambda x: 1000*x.year + x.month)
-	cdf.drop(['Idx', 'OPD_RD', 'OIdx', 'CType', 'Desc', 'Beat', 'Addr', 'Src', 'UCR', 'Statute'], axis=1, inplace=True)
+	cdf = pre_process(cdf) # From preprocessing_crime.py
 	
-	d = crime_dict(cdf)
-	cdf.CrimeCat = cdf.CrimeCat.map(d)
 	cdf_dummy = pd.get_dummies(cdf, prefix='CTYPE', columns=['CrimeCat'])
-	cdf_dummy.dropna(inplace=True)
+	#cdf_dummy.dropna(inplace=True) nans now dropped in pre_process
 	cdf_dummy.to_csv("data/cdf.csv")
 
 	print "Creating crime table..."

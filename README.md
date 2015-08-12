@@ -1,10 +1,10 @@
-## oakland-crime-housing
+# oakland-crime-housing
 <p>
 Create database/tables, pre-process crime data, load crime data into database, load shape files into database, group data by area.
 <p>
 ## Next steps:
 <p>
-# Time Series:
+### Time Series:
 <p>
 1. Make time series plot function. Takes shape, time_segment. Displays 5 plots (one per crime level) for all past data, for the shape, as counted by the time_segment. 
 <p>
@@ -16,7 +16,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 5. Pick model (tract or group block, time level), optimize.
 <p>
-# Clustering:
+### Clustering:
 <p>
 1. Choose level of time resolution/perform clustering across time resolutions to find best.
 <p>
@@ -26,7 +26,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 4. Pick final time resolution, graph for each time segement
 <p>
-# Visualization/Presentation:
+### Visualization/Presentation:
 <p>
 1. Combine map slider wow.
 <p>
@@ -34,7 +34,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 3. choose area, show predicted crime levels
 <p>
-# Extra:
+### Extra:
 <p>
 6. Check out kriging, other ways of spatio correlation. Gaussian etc.
 <p>

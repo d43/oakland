@@ -8,7 +8,7 @@ from operator import itemgetter # for getting max tuple quickly
 def pre_process(cdf):
 	cdf.Date = pd.to_datetime(cdf.Date)
 	cdf['year'] = pd.DatetimeIndex(cdf.Date).year
-	cdf['Year_Month'] = cdf.Date.map(lambda x: 1000*x.year + x.month)
+	cdf['year_month'] = cdf.Date.map(lambda x: 1000*x.year + x.month)
 	cdf.drop(['Idx', 'OIdx', 'CType', 'Desc', 'Beat', 'Addr', 'Src', 'UCR', 'Statute'], axis=1, inplace=True)
 
 	# Remove two categories that don't trend well over time.
@@ -51,5 +51,6 @@ def pre_process(cdf):
 		drop_me.extend(l)
 
 	cdf.drop(drop_me, inplace=True)
+	cdf_dummy = pd.get_dummies(cdf, prefix='CTYPE', columns=['CrimeCat'])
 
-	return cdf
+	cdf_dummy.to_csv("data/cdf.csv")

@@ -58,37 +58,26 @@ def create_crime_table():
 	Add geom column
 	Create geom points
 	'''
-	print "preprocessing data..."
 	cdf = pd.read_csv("data/OPD_150308.csv")
-	cdf = pre_process(cdf) # From preprocessing_crime.py
-	
-	cdf_dummy = pd.get_dummies(cdf, prefix='CTYPE', columns=['CrimeCat'])
-	#cdf_dummy.dropna(inplace=True) nans now dropped in pre_process
-	cdf_dummy.to_csv("data/cdf.csv")
+	pre_process(cdf) # From preprocessing_crime.py
 
-	print "Creating crime table..."
+
 	cur.execute('''
 		DROP TABLE IF EXISTS crime;
 
 		CREATE TABLE crime (Idx serial PRIMARY KEY,
+							OPD_RD varchar,
 							Date date,
 							Time time,
 							Lat float8,
 							Lng float8,
 							Year int,
 							Year_Month int,
-							CTYPE_DOM_VIOL float8,
-							CTYPE_NONVIOLENT float8,
-							CTYPE_OTHER float8,
-							CTYPE_OTHER_MISSING_PERSON float8,
-							CTYPE_OTHER_RUNAWAY float8,
 							CTYPE_QUALITY float8,
-							CTYPE_TRAFFIC_MISDEMEANOR float8,
-							CTYPE_TRAFFIC_TOWED_VEHICLE float8,
+							CTYPE_NONVIOLENT float8,
 							CTYPE_VEHICLE_BREAK_IN float8,
 							CTYPE_VEHICLE_THEFT float8,
-							CTYPE_VIOLENT float8,
-							CTYPE_WARRANT float8
+							CTYPE_VIOLENT float8
 							);
 
 		COPY crime FROM '/Users/danaezoule/Documents/oakland-crime-housing/data/cdf.csv' WITH DELIMITER ',' CSV HEADER;
@@ -104,15 +93,24 @@ def create_shape_table():
 	Load shape files into database
 	'''
 	print "Creating shape table..."
-	os.system("ogr2ogr -f 'PostgreSQL' PG:'dbname= oakland user=danaezoule' '/Users/danaezoule/Documents/oakland-crime-housing/tl_2014_06_tabblock10' -nlt PROMOTE_TO_MULTI -nln shp_table -append")
+	os.system("ogr2ogr -f 'PostgreSQL' PG:'dbname= oakland user=danaezoule' '/Users/danaezoule/Documents/oakland-crime-housing/tl_2014_06_bg' -nlt PROMOTE_TO_MULTI -nln shp_table -append")
 	cur.execute("SELECT UpdateGeometrySRID('shp_table', 'wkb_geometry', 4326);")
 	conn.commit()
 
 def join_crime_blocks():
 	'''
-	Assign census blocks to crime data
+	Assign census blocks to crime data in new table
 	'''
-	pass
+	cur.execute('''
+		DROP TABLE IF EXISTS crime_blocks;
+
+		CREATE TABLE crime_blocks AS
+				SELECT crime.*, shp_table.ogc_fid
+				FROM crime JOIN shp_table
+				ON ST_Within(crime.geom, shp_Table.wkb_geometry);
+	''')
+	conn.commit()
+
 
 if __name__ == "__main__":
 	print "Creating Database"
@@ -125,4 +123,5 @@ if __name__ == "__main__":
 		print "Creating Crime Table"
 		create_crime_table()
 		create_shape_table()
-		#join_crime_blocks()
+		print "Creating Crime Geom Table"
+		join_crime_blocks()

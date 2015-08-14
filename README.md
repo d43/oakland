@@ -6,17 +6,17 @@ Describing change over time in similarity of Oakland neighborhoods using geograp
 <p>
 ## Preprocessing:
 <p>
-Create database/tables, pre-process crime data, load crime data into database, load shape files into database, group data by area.
+Create database/tables, pre-process crime data, load crime data into database, load shape files into database, group data by area. Files: database.py, crime_dict.py, preprocessing_crime.py
 <p>
 ## Next steps:
 <p>
 ### Clustering:
 <p>
-1. Choose level of time resolution/perform clustering across time resolutions to find best. Choose census tract or group_block.
+1. Choose level of time resolution/perform clustering across time resolutions to find best. Choose geographic resolution: census tract or group_block.
 <p>
 2. Factor engineering
 <p>
-3. Model
+3. Model. Files: model.py
 <p>
 4. Pick final time resolution, graph for each time segement
 <p>

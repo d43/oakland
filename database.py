@@ -72,7 +72,7 @@ def create_crime_table():
 							Lat float8,
 							Lng float8,
 							Year int,
-							Year_Month int,
+							Year_Month float8,
 							CTYPE_QUALITY float8,
 							CTYPE_NONVIOLENT float8,
 							CTYPE_VEHICLE_BREAK_IN float8,
@@ -92,7 +92,6 @@ def create_shape_table():
 	'''
 	Load shape files into database
 	'''
-	print "Creating shape table..."
 	os.system("ogr2ogr -f 'PostgreSQL' PG:'dbname= oakland user=danaezoule' '/Users/danaezoule/Documents/oakland-crime-housing/tl_2014_06_bg' -nlt PROMOTE_TO_MULTI -nln shp_table -append")
 	cur.execute("SELECT UpdateGeometrySRID('shp_table', 'wkb_geometry', 4326);")
 	conn.commit()
@@ -111,6 +110,31 @@ def join_crime_blocks():
 	''')
 	conn.commit()
 
+def create_area_features():
+	'''
+	Output: Table with one row for each area with following features:
+	Crime 1 (Quality) Sum
+	Crime 2 (Nonviolent) Sum
+	Crime 3 (Car Break In) Sum
+	Crime 4 (Car Theft) Sum
+	Crime 5 (Violent) Sum
+	'''
+
+	cur.execute('''
+		DROP TABLE IF EXISTS area_features;
+
+		CREATE TABLE area_features AS
+				SELECT ogc_fid,
+				SUM(CTYPE_QUALITY) as quality,
+				SUM(CTYPE_NONVIOLENT) as nonviolent,
+				SUM(CTYPE_VEHICLE_BREAK_IN) as vehicle_break_in,
+				SUM(CTYPE_VEHICLE_THEFT) as vehicle_theft,
+				SUM(CTYPE_VIOLENT) as violent
+				FROM crime_blocks
+				GROUP BY ogc_fid;
+	''')
+	conn.commit()
+
 
 if __name__ == "__main__":
 	print "Creating Database"
@@ -122,6 +146,9 @@ if __name__ == "__main__":
 		cur = conn.cursor()
 		print "Creating Crime Table"
 		create_crime_table()
+		print "Loading Shapes"
 		create_shape_table()
 		print "Creating Crime Geom Table"
 		join_crime_blocks()
+		print "Creating Feature Table"
+		create_area_features()

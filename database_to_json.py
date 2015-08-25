@@ -50,7 +50,7 @@ def query_db(conn, query):
 def to_json(idx, row, clusters):
 	'''
 	Input:
-	- Row of dataframe
+	- Index of data frame, row of dataframe, dictionary of clusters (one entry per year)
 
 	Output:
 	- GeoJSON file
@@ -59,8 +59,8 @@ def to_json(idx, row, clusters):
 
 	# Create properties dictionary to assign colors based on each year
 	properties = {}
-	for year in clusters:
-		properties[year] = clusters[year][idx]
+	for year, values in clusters.iteritems():
+		properties[year] = color[values[idx]]
 
 	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }
 	#geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':{ 'color':color[clusters[idx]] } }

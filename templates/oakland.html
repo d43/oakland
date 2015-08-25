@@ -29,21 +29,19 @@ function initMap() {
   // Add Census shapes from GeoJSON
   map_jsons = eval( {{ map_jsons | safe }} )
   map.data.addGeoJson(map_jsons);
+
+  // Color disappears on mouse over for better visibility and reappears on mouse out.
+  map.data.addListener('mouseover', function(event) {
+    map.data.revertStyle();
+    map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
+    });
+
   // Assign colors from GeoJSON
   map.data.setStyle(function(feature) {
   return {
     fillColor: feature.getProperty('color'),
     strokeWeight: 1
     };
-
-    // Color disappears on mouse over for better visibility and reappears on mouse out.
-    // map.data.addListener('mouseover', function(event) {
-    // map.data.revertStyle();
-    // map.data.overrideStyle(event.feature, {strokeWeight: 5, fillColor: '#000000', fillOpacity: 0.3});
-    // });
-  //   map.data.addListener('mouseout', function(event) {
-  //   map.data.revertStyle();
-  // });
 
   });
 }

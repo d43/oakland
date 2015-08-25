@@ -112,7 +112,7 @@ def join_crime_blocks():
 
 def create_area_features():
 	'''
-	Output: Table with one row for each area with following features:
+	Output: Table with one row for each area for each year with following features:
 	Crime 1 (Quality) Sum
 	Crime 2 (Nonviolent) Sum
 	Crime 3 (Car Break In) Sum
@@ -124,14 +124,14 @@ def create_area_features():
 		DROP TABLE IF EXISTS area_features;
 
 		CREATE TABLE area_features AS
-				SELECT ogc_fid,
+				SELECT ogc_fid, Year,
 				SUM(CTYPE_QUALITY) as quality,
 				SUM(CTYPE_NONVIOLENT) as nonviolent,
 				SUM(CTYPE_VEHICLE_BREAK_IN) as vehicle_break_in,
 				SUM(CTYPE_VEHICLE_THEFT) as vehicle_theft,
 				SUM(CTYPE_VIOLENT) as violent
 				FROM crime_blocks
-				GROUP BY ogc_fid;
+				GROUP BY ogc_fid, Year;
 	''')
 	conn.commit()
 

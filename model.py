@@ -52,7 +52,8 @@ def clusters(conn):
 	- Psycopg2 connection to database
 
 	Output:
-	- Numbers of cluster for each geometry
+	- Dictionary with one entry per year, containing numbers of clusters for each geometry.
+
 	'''
 
 	cur = conn.cursor()
@@ -60,15 +61,28 @@ def clusters(conn):
 	df = pd.DataFrame(cur.fetchall())
 
 	cdf = df.copy()
-	cdf.columns = ['Group_Block', 'Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
+	cdf.columns = ['Group_Block', 'Year', 'Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
 
+	# Following lines to be used in feature engineering if desired (note change to df columns):
 	#cdf.columns = ['Idx', 'OPD_RD', 'Date', 'Time', 'Lat', 'Lng', 'year', 'year_month', 'quality', 'nonviolent', 'car_break_in', 'car_theft', 'violent', 'geom', 'block_group']
 	#cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).dayofweek
 	#cdf['day'] = pd.DatetimeIndex(cdf.Date).day
 	#cdf['hour'] = [i.hour for i in cdf.Time]
 
+	# Create simple KMeans model, and fit to earliest data set (2009).
+	# Keeping centroid constant, predict clusters for subsequent years (2010-2014).
+	# Return a dictionary of the predictions (one entry per year).
+
+	columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
 	km = KMeans()
-	clus = km.fit_predict(cdf[['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']])
+	clus9 = km.fit_predict(cdf[cdf.Year == 2009][columns])
+	clus10 = km.predict(cdf[cdf.Year == 2010][columns])
+	clus11 = km.predict(cdf[cdf.Year == 2011][columns])
+	clus12 = km.predict(cdf[cdf.Year == 2012][columns])
+	clus13 = km.predict(cdf[cdf.Year == 2013][columns])
+	clus14 = km.predict(cdf[cdf.Year == 2014][columns])
+
+	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }
 
 	return clus
 

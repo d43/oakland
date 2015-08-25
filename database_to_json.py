@@ -57,7 +57,14 @@ def to_json(idx, row, clusters):
 	'''
 	color = ['#FF0000', '#FFF703', '#1AFF00', '#00F7FF', '#0800FF', '#FF00EE', '#FFC300', '#A938FF']
 
-	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':{ 'color':color[clusters[idx]] } }
+	# Create properties dictionary to assign colors based on each year
+	properties = {}
+	for year in clusters:
+		properties[year] = clusters[year][idx]
+
+	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }
+	#geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':{ 'color':color[clusters[idx]] } }
+
 	return geo_json
 
 def join_json(clusters=None):

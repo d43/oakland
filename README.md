@@ -24,7 +24,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 ### Visualization/Presentation:
 <p>
-1. Combine quarterly maps of neighborhood clustering (four for each year, 2009 to present) into infographic. Slider for time, hover over with crime distributions.
+1. Combine maps of neighborhood clustering into infographic. Slider for time, hover over with crime distributions.
 <p>
 2. Flesh out tech summary for presentation.
 <p>

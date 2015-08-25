@@ -12,13 +12,13 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 ### Clustering:
 <p>
-1. Choose level of time resolution/perform clustering across time resolutions to find best. Choose geographic resolution: census tract or group_block.
+1. Choose level of time resolution/perform clustering across time resolutions to find best (picked year). Choose geographic resolution: census tract or group_block (picked group_block).
 <p>
 2. Factor engineering
 <p>
 3. Model. Files: model.py
 <p>
-4. Pick final time resolution, graph for each time segement
+4. Pick final time resolution, graph for each time segment
 <p>
 5. Add rental, real estate, American Community Survey, or other additional data sets.
 <p>

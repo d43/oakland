@@ -26,8 +26,16 @@ function initMap() {
     center: {lat: 37.780159, lng: -122.209740},
     zoom: 12
   }); 
-  // Add Census shapes via Json
-  // map.data.addGeoJson();
+  // Add Census shapes from GeoJSON
+  map_jsons = eval( {{ map_jsons | safe }} )
+  map.data.addGeoJson(map_jsons);
+  // Assign colors from GeoJSON
+  map.data.setStyle(function(feature) {
+  return {
+    fillColor: feature.getProperty('color'),
+    strokeWeight: 1
+    };
+  });
 }
 
     </script>

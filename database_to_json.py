@@ -57,7 +57,7 @@ def to_json(idx, row, clusters):
 	'''
 	color = ['#FF0000', '#FFF703', '#1AFF00', '#00F7FF', '#0800FF', '#FF00EE', '#FFC300', '#A938FF']
 
-	# Create properties dictionary to assign colors based on each year
+	# Create properties dictionary to assign color to location corresponding to yearly cluster
 	properties = {}
 	for year, values in clusters.iteritems():
 		properties[year] = color[values[idx]]

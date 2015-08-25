@@ -112,26 +112,42 @@ def join_crime_blocks():
 
 def create_area_features():
 	'''
-	Output: Table with one row for each area for each year with following features:
+	Output: Table with one row for each area with following features:
+
+	Year
 	Crime 1 (Quality) Sum
 	Crime 2 (Nonviolent) Sum
 	Crime 3 (Car Break In) Sum
 	Crime 4 (Car Theft) Sum
 	Crime 5 (Violent) Sum
+
+	Filters:
+	Drop 2015 data for now (to add in if complete data received)
+	Keep only areas with at least one crime per year for 2009-2014
 	'''
 
 	cur.execute('''
 		DROP TABLE IF EXISTS area_features;
 
 		CREATE TABLE area_features AS
-				SELECT ogc_fid, Year,
-				SUM(CTYPE_QUALITY) as quality,
-				SUM(CTYPE_NONVIOLENT) as nonviolent,
-				SUM(CTYPE_VEHICLE_BREAK_IN) as vehicle_break_in,
-				SUM(CTYPE_VEHICLE_THEFT) as vehicle_theft,
-				SUM(CTYPE_VIOLENT) as violent
-				FROM crime_blocks
-				GROUP BY ogc_fid, Year;
+				WITH temp AS (
+					SELECT ogc_fid, COUNT(DISTINCT Year) as years
+					FROM crime_blocks
+					WHERE Year < 2015
+					GROUP BY ogc_fid)
+				SELECT c.ogc_fid, c.Year,
+				SUM(c.CTYPE_QUALITY) as quality,
+				SUM(c.CTYPE_NONVIOLENT) as nonviolent,
+				SUM(c.CTYPE_VEHICLE_BREAK_IN) as vehicle_break_in,
+				SUM(c.CTYPE_VEHICLE_THEFT) as vehicle_theft,
+				SUM(c.CTYPE_VIOLENT) as violent
+				FROM crime_blocks AS c
+				JOIN temp AS t
+				ON c.ogc_fid = t.ogc_fid
+				WHERE c.Year < 2015
+				AND t.years = 6
+				GROUP BY c.ogc_fid, c.Year;
+
 	''')
 	conn.commit()
 

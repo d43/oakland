@@ -6,27 +6,21 @@ Describing change over time in similarity of Oakland neighborhoods using geograp
 <p>
 ## Preprocessing:
 <p>
-Create database/tables, pre-process crime data, load crime data into database, load shape files into database, create feature tables grouped by area and year. Files: database.py, crime_dict.py, preprocessing_crime.py
+Files: database.py, crime_dict.py, preprocessing_crime.py
 <p>
-## Next steps:
+Create database/tables, pre-process crime data, load crime data into database, load shape files into database, create feature tables grouped by area and year.
 <p>
 ### Clustering:
 <p>
-1. Choose level of time resolution/perform clustering across time resolutions to find best (picked year). Choose geographic resolution: census tract or group_block (picked group_block).
+Files: model.py
 <p>
-2. Factor engineering
-<p>
-3. Model. Files: model.py
-<p>
-4. Pick final time resolution, graph for each time segment
-<p>
-5. Add rental, real estate, American Community Survey, or other additional data sets.
+K-means model, fitted with first year's (2009's) data. Clusters of future years predicted with fitted model. To do: Factor engineering. Consider changing geographic segment (block vs group block vs tract). Add rental, real estate, American Community Survey, or other additional data sets.
 <p>
 ### Visualization/Presentation:
 <p>
-1. Neighborhood clustering infographic with slider for time. In progress: labels, hover over to show crime distributions. Files: app.py, database_to_json.py, templates/oakland.html
+Files: app.py, database_to_json.py, templates/oakland.html
 <p>
-2. Flesh out tech summary for presentation.
+Neighborhood clustering infographic with slider for time. To do: Labels. Hover over to show crime distributions and definition of clusters/similarities. Flesh out tech summary for presentation.
 <p>
 ### Extra:
 <p>

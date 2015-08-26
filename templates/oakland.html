@@ -66,30 +66,31 @@ function initMap() {
 }
 
 // Year slider
-// function show_year() {
-//   var year = document.getElementById("year_slider").value;
-//   var element = document.getElementById("year_value"); //What is year_value?
-//   element.innerHTML = year; //What does this do?
+function show_year() {
+  var year = document.getElementById("year_slider").value;
+  var element = document.getElementById("year"); //What is year_value?
+  element.innerHTML = year; //What does this do?
 
-//   map.data.setStyle(function(feature) {
-//     return {
-//       fillColor: feature.getProperty(year),
-//       strokeWeight: 1
-//     };
-//   });
-// }
+  map.data.setStyle(function(feature) {
+    return {
+      fillColor: feature.getProperty(year),
+      strokeWeight: 1
+    };
+  });
+}
 
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBI62Elt07dmxFJC3J0-6GQIog-00OeUnU&callback=initMap"
         async defer></script>
 
     <div id="panel">
-      <!-- <div>
-      <b>Crimes:</b.
+      <div>
+      <b>Oakland Neighborhoods</b.
       <p type="text" id="crimes" /> 
       </div>
       <div>
         <input type="range" id="year_slider" min="2009" max="2014" step="1" value="2009"
-            onchange="show_year();"> <br>-->
+            onchange="show_year();"> <br>
+        <p class="year">Year: <span id="year" value="year"></span></p>
   </body>
 </html>

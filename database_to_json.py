@@ -25,10 +25,12 @@ def set_query():
 	# Join on area_features to ensure that only areas with crime counts are included
 
 	map_query = '''
-				SELECT ST_AsGeoJSON(shp_table.wkb_geometry) as geom
+				SELECT DISTINCT shp_table.ogc_fid as area_id,
+				ST_AsGeoJSON(shp_table.wkb_geometry) as geom
 				FROM shp_table
 				JOIN area_features
 				ON shp_table.ogc_fid = area_features.ogc_fid
+				ORDER BY area_id
 				;'''
 
 	return map_query
@@ -44,7 +46,7 @@ def query_db(conn, query):
 	cur = conn.cursor()
 	cur.execute(query)
 	df = pd.DataFrame(cur.fetchall())
-	df.columns = ['geom']
+	df.columns = ['area_id', 'geom']
 	return df
 
 def to_json(idx, row, clusters):

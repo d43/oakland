@@ -4,7 +4,7 @@
 <p>
 Describing change over time in similarity of Oakland neighborhoods using geographically tagged quantitative data (crime incidents) and US census shape files. Project techniques and tools include unsupervised learning, k-means clustering (sklearn), geospatial analysis (PostgreSQL/PostGIS), visualization (Google Maps API, javascript).
 <p>
-## Preprocessing:
+### Preprocessing:
 <p>
 Files: database.py, crime_dict.py, preprocessing_crime.py
 <p>

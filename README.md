@@ -2,11 +2,11 @@
 <p>
 ## Description:
 <p>
-Describing change over time in similarity of Oakland neighborhoods using geographically tagged quantitative data (crime distributions, rental prices, housing prices) and US census shape files. Project techniques and tools include unsupervised learning, k-means clustering (sklearn), geospatial analysis (PostgreSQL/PostGIS), visualization.
+Describing change over time in similarity of Oakland neighborhoods using geographically tagged quantitative data (crime incidents) and US census shape files. Project techniques and tools include unsupervised learning, k-means clustering (sklearn), geospatial analysis (PostgreSQL/PostGIS), visualization (Google Maps API, javascript).
 <p>
 ## Preprocessing:
 <p>
-Create database/tables, pre-process crime data, load crime data into database, load shape files into database, group data by area. Files: database.py, crime_dict.py, preprocessing_crime.py
+Create database/tables, pre-process crime data, load crime data into database, load shape files into database, create feature tables grouped by area and year. Files: database.py, crime_dict.py, preprocessing_crime.py
 <p>
 ## Next steps:
 <p>
@@ -24,7 +24,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 ### Visualization/Presentation:
 <p>
-1. Combine maps of neighborhood clustering into infographic. Slider for time, hover over with crime distributions.
+1. Neighborhood clustering infographic with slider for time. In progress: labels, hover over to show crime distributions. Files: app.py, database_to_json.py, templates/oakland.html
 <p>
 2. Flesh out tech summary for presentation.
 <p>

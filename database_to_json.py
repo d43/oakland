@@ -2,15 +2,7 @@ import psycopg2
 import pandas as pd
 import json
 
-# Connect to database.
 
-conn_dict = {'dbname':'oakland', 'user':'danaezoule', 'host':'/tmp'}
-conn = psycopg2.connect(dbname=conn_dict['dbname'], user=conn_dict['user'], host=conn_dict['host'])
-c = conn.cursor()
-
-#add a step here to speed things up:
-#check if file exists, if not, repull and pickle it
-#see kevin's code: safe_walk_app/safe_walk_app.py save_geo_dict
 
 def set_query():
 	'''
@@ -57,21 +49,23 @@ def to_json(idx, row, clusters):
 	Output:
 	- GeoJSON file
 	'''
-	color = ['#FF0000', '#FFF703', '#1AFF00', '#00F7FF', '#0800FF', '#FF00EE', '#FFC300', '#A938FF']
+	color = ['#FFF703', '#1AFF00', '#00F7FF', '#0800FF', '#FF00EE', '#FFC300', '#A938FF', '#FF0000']
 
-	# Create properties dictionary to assign color to location corresponding to yearly cluster
+	# Create properties dictionary to assign color to location corresponding to yearly cluster.
 	properties = {}
 	for year, values in clusters.iteritems():
 		properties[year] = color[values[idx]]
 
+	# Create properties dictionary to store features for display in visualization.
+
 	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }
-	#geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':{ 'color':color[clusters[idx]] } }
 
 	return geo_json
 
-def join_json(clusters=None):
+def join_json(conn, clusters):
 	'''
 	Input:
+	- Dictionary of clusters (from model.py)
 
 	Output:
 	- GeoJSON Feature Collection (ready for mapping)

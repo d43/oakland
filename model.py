@@ -2,9 +2,6 @@ import psycopg2
 import pandas as pd
 from sklearn.cluster import KMeans
 
-conn = psycopg2.connect("dbname=oakland user=danaezoule")
-
-
 '''
 Model To-Do:
 
@@ -16,9 +13,11 @@ Feature Engineering Brainstorming:
 
 	Geographical:
 	    Census tracts, group blocks, or blocks
+	    	Group blocks?
 
 	Time Group By:
 	    Month, quarter, year
+	    	Year!
 
 	Time features:
 	    Count for weekday or weekend
@@ -76,7 +75,7 @@ def clusters(conn):
 	# Return a dictionary of the predictions (one entry per year).
 
 	columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
-	km = KMeans(n_clusters=6)
+	km = KMeans(n_clusters=5)
 	clus9 = km.fit_predict(cdf[cdf.Year == 2009].sort('Group_Block')[columns])
 	clus10 = km.predict(cdf[cdf.Year == 2010].sort('Group_Block')[columns])
 	clus11 = km.predict(cdf[cdf.Year == 2011].sort('Group_Block')[columns])
@@ -84,10 +83,6 @@ def clusters(conn):
 	clus13 = km.predict(cdf[cdf.Year == 2013].sort('Group_Block')[columns])
 	clus14 = km.predict(cdf[cdf.Year == 2014].sort('Group_Block')[columns])
 
-	#clus = {'2009':zip(area_index, clus9), '2010':zip(area_index, clus10), '2011':zip(area_index, clus11), '2012':zip(area_index, clus12), '2013':zip(area_index, clus13), '2014':zip(area_index, clus14) }
+	# Aggregate yearly clusters into one dictionary.
 	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }
 	return clus
-
-
-if __name__ == "__main__":
-    model(conn)

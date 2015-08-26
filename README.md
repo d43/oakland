@@ -14,7 +14,7 @@ Create database/tables, pre-process crime data, load crime data into database, l
 <p>
 Files: model.py
 <p>
-K-means model, fitted with first year's (2009's) data. Clusters of future years predicted with fitted model. To do: Factor engineering. Consider changing geographic segment (block vs group block vs tract). Add rental, real estate, American Community Survey, or other additional data sets.
+K-means model, fitted with first year's (2009's) data. Clusters of future years predicted with fitted model. To do: Feature engineering, PCA, model optimization. Consider changing geographic segment (block vs group block vs tract). Add rental, real estate, American Community Survey, or other additional data sets.
 <p>
 ### Visualization/Presentation:
 <p>

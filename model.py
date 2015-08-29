@@ -75,7 +75,7 @@ def clusters(conn):
 	# Return a dictionary of the predictions (one entry per year).
 
 	columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
-	km = KMeans(n_clusters=5)
+	km = KMeans(n_clusters=7)
 	clus9 = km.fit_predict(cdf[cdf.Year == 2009].sort('Group_Block')[columns])
 	clus10 = km.predict(cdf[cdf.Year == 2010].sort('Group_Block')[columns])
 	clus11 = km.predict(cdf[cdf.Year == 2011].sort('Group_Block')[columns])

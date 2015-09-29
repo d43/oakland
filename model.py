@@ -10,6 +10,7 @@ Feature Engineering Brainstorming:
 	    Normalize by population: none, assume census divisions cover this
 	    Normalize by geography (square footage or meterage)
 	    Normalize by total crime count
+	    Normalize across all features (dimensionality)
 
 	Geographical:
 	    Census tracts, group blocks, or blocks
@@ -38,7 +39,12 @@ Feature Engineering Brainstorming:
 	    
 	Data that varies from year to year:
 	    If I use it, can I detect similar centroids between years?
-	    Should I instead ignore this completely, despite losing Lovely connection?
+	    Should I instead ignore this completely, despite losing rental data?
+	    
+	Final model:
+	    Run several times, pick best clusters- min of objective function (within cluster
+	    variation, provided by pairwise squared Euclidean distances between observations)
+	    Dendrogram/hierarchical clustering to pick k
 '''
 
 

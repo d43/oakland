@@ -40,7 +40,8 @@ function initMap() {
     zoom: 12
   }); 
   // Add Census shapes from GeoJSON
-  map_jsons = eval( {{ map_jsons | safe }} )
+  // Look into how map_jsons is passed over. Not using eval now.
+  map_jsons = {{ map_jsons | safe }}
   map.data.addGeoJson(map_jsons);
 
   // Style disappears on mouse over for better visibility.

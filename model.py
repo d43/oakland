@@ -64,14 +64,17 @@ def clusters(conn):
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM area_features;")
 	df = pd.DataFrame(cur.fetchall())
-
 	cdf = df.copy()
-	cdf.columns = ['Group_Block', 'Year', 'Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
 
-	area_index = cdf.sort('Group_Block').Group_Block.unique()
+	cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='area_features';")
+	cdf.columns = cur.fetchall()
+	#cdf.columns = ['Group_Block', 'Year', 'q_count', 'q_weekend', 'q_morning', 'q_workday', ''
+
+	area_index = cdf.sort('ogc_fid').ogc_fid.unique()
 
 	# Following lines to be used in feature engineering if desired (note change to df columns):
 	#cdf.columns = ['Idx', 'OPD_RD', 'Date', 'Time', 'Lat', 'Lng', 'year', 'year_month', 'quality', 'nonviolent', 'car_break_in', 'car_theft', 'violent', 'geom', 'block_group']
+	
 	#cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).dayofweek
 	#cdf['day'] = pd.DatetimeIndex(cdf.Date).day
 	#cdf['hour'] = [i.hour for i in cdf.Time]
@@ -80,14 +83,14 @@ def clusters(conn):
 	# Keeping centroid constant, predict clusters for subsequent years (2010-2014).
 	# Return a dictionary of the predictions (one entry per year).
 
-	columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
+	#columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
 	km = KMeans(n_clusters=7)
-	clus9 = km.fit_predict(cdf[cdf.Year == 2009].sort('Group_Block')[columns])
-	clus10 = km.predict(cdf[cdf.Year == 2010].sort('Group_Block')[columns])
-	clus11 = km.predict(cdf[cdf.Year == 2011].sort('Group_Block')[columns])
-	clus12 = km.predict(cdf[cdf.Year == 2012].sort('Group_Block')[columns])
-	clus13 = km.predict(cdf[cdf.Year == 2013].sort('Group_Block')[columns])
-	clus14 = km.predict(cdf[cdf.Year == 2014].sort('Group_Block')[columns])
+	clus9 = km.fit_predict(cdf[cdf.Year == 2009].sort('ogc_fid'))
+	clus10 = km.predict(cdf[cdf.Year == 2010].sort('ogc_fid'))
+	clus11 = km.predict(cdf[cdf.Year == 2011].sort('ogc_fid'))
+	clus12 = km.predict(cdf[cdf.Year == 2012].sort('ogc_fid'))
+	clus13 = km.predict(cdf[cdf.Year == 2013].sort('ogc_fid'))
+	clus14 = km.predict(cdf[cdf.Year == 2014].sort('ogc_fid'))
 
 	# Aggregate yearly clusters into one dictionary.
 	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }

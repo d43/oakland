@@ -10,8 +10,8 @@ def pre_process(cdf):
 	cdf['year'] = pd.DatetimeIndex(cdf.Date).year
 
 	# Create time features
-	cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).day_of_week
-	cdf['hour'] = [i.hour for i in cdf.Time]
+	cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).dayofweek
+	cdf['hour'] = [i.hour for i in pd.to_datetime(cdf.Time)]
 	cdf['weekend'] = cdf.day_of_week.isin([5,6])*1
 	cdf['morning'] = cdf.hour.isin([1, 2, 3, 4, 5, 6, 7])*1
 	cdf['workday'] = cdf.hour.isin([8, 9, 10, 11, 12, 13, 14, 15])*1

@@ -1,6 +1,8 @@
 import psycopg2
 import pandas as pd
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 '''
 Model To-Do:
@@ -61,36 +63,49 @@ def clusters(conn):
 
 	'''
 
+	print "Modeling: connecting to DB"
+
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM area_features;")
 	df = pd.DataFrame(cur.fetchall())
 	cdf = df.copy()
 
 	cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='area_features';")
-	cdf.columns = cur.fetchall()
-	#cdf.columns = ['Group_Block', 'Year', 'q_count', 'q_weekend', 'q_morning', 'q_workday', ''
+	col_df = pd.DataFrame(cur.fetchall())
+	col_df.columns = ['labels']
+	cdf.columns = col_df['labels'].tolist()
 
-	area_index = cdf.sort('ogc_fid').ogc_fid.unique()
+	print "Modeling: scaling data"
+	# Scale data
+	df_index = pd.DataFrame(cdf.pop('ogc_fid'))
+	df_index['year'] = cdf.pop('year')
 
-	# Following lines to be used in feature engineering if desired (note change to df columns):
-	#cdf.columns = ['Idx', 'OPD_RD', 'Date', 'Time', 'Lat', 'Lng', 'year', 'year_month', 'quality', 'nonviolent', 'car_break_in', 'car_theft', 'violent', 'geom', 'block_group']
-	
-	#cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).dayofweek
-	#cdf['day'] = pd.DatetimeIndex(cdf.Date).day
-	#cdf['hour'] = [i.hour for i in cdf.Time]
+	ss = StandardScaler()
+	scaled_df = pd.DataFrame(ss.fit_transform(cdf))
+	scaled_df.columns = cdf.columns
+
+	print "Modeling: PCA"
+	# PCA
+	pca = PCA(n_components = 5)
+	pca_df = pd.DataFrame(pca.fit_transform(scaled_df))
+
+	pca_df['ogc_fid'] = df_index['ogc_fid']
+	pca_df['year'] = df_index['year']
 
 	# Create simple KMeans model, and fit to earliest data set (2009).
 	# Keeping centroid constant, predict clusters for subsequent years (2010-2014).
 	# Return a dictionary of the predictions (one entry per year).
 
 	#columns = ['Quality', 'Nonviolent', 'Vehicle_Break_In', 'Vehicle_Theft', 'Violent']
+
+	print "Modeling: kMeans"
 	km = KMeans(n_clusters=7)
-	clus9 = km.fit_predict(cdf[cdf.Year == 2009].sort('ogc_fid'))
-	clus10 = km.predict(cdf[cdf.Year == 2010].sort('ogc_fid'))
-	clus11 = km.predict(cdf[cdf.Year == 2011].sort('ogc_fid'))
-	clus12 = km.predict(cdf[cdf.Year == 2012].sort('ogc_fid'))
-	clus13 = km.predict(cdf[cdf.Year == 2013].sort('ogc_fid'))
-	clus14 = km.predict(cdf[cdf.Year == 2014].sort('ogc_fid'))
+	clus9 = km.fit_predict(pca_df[pca_df.year == 2009].sort('ogc_fid'))
+	clus10 = km.predict(pca_df[pca_df.year == 2010].sort('ogc_fid'))
+	clus11 = km.predict(pca_df[pca_df.year == 2011].sort('ogc_fid'))
+	clus12 = km.predict(pca_df[pca_df.year == 2012].sort('ogc_fid'))
+	clus13 = km.predict(pca_df[pca_df.year == 2013].sort('ogc_fid'))
+	clus14 = km.predict(pca_df[pca_df.year == 2014].sort('ogc_fid'))
 
 	# Aggregate yearly clusters into one dictionary.
 	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }

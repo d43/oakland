@@ -13,10 +13,13 @@ def pre_process(cdf):
 	cdf['day_of_week'] = pd.DatetimeIndex(cdf.Date).dayofweek
 	cdf['hour'] = [i.hour for i in pd.to_datetime(cdf.Time)]
 	cdf['weekend'] = cdf.day_of_week.isin([5,6])*1
+
+	# Group crimes across segments of the day. Midnight (hr 0) here is excluded as it's used
+	# by OPD (Oakland Police Dept) when time is unknown. Determined by spike in hr_0 across
+	# all crime types.
 	cdf['morning'] = cdf.hour.isin([1, 2, 3, 4, 5, 6, 7])*1
 	cdf['workday'] = cdf.hour.isin([8, 9, 10, 11, 12, 13, 14, 15])*1
 	cdf['evening'] = cdf.hour.isin([16, 17, 18, 19, 20, 21, 22, 23])*1
-	#cdf['year_month'] = cdf.Date.map(lambda x: 1000*x.year + x.month)
 
 	# Drop unused columns
 	cdf.drop(['Idx', 'OIdx', 'CType', 'Desc', 'Beat', 'Addr', 'Src', 'UCR', 'Statute'], axis=1, inplace=True)

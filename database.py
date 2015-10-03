@@ -144,32 +144,26 @@ def join_crime_blocks():
 	''')
 	conn.commit()
 
-def create_area_features():
+def create_sub_features():
 	'''
-	Output: Table with one row for each area with following features:
+	Output: Five tables (one for each crime type: quality, nonviolent, vehicle_break_in,
+	vehicle_theft) with one row for each area, for each year as follows:
 
-	Year
-	Crime 1 (Quality) Sum
-	Crime 2 (Nonviolent) Sum
-	Crime 3 (Car Break In) Sum
-	Crime 4 (Car Theft) Sum
-	Crime 5 (Violent) Sum
+	For area/year:
+	_count: Count of all instances
+	_weekend: Count of crimes occuring on the weekend 
+	_morning: Count of crimes occuring in the morning (1-7am)
+	_workday: Count of crimes occuring in the workday (8am - 3pm)
+	_evening: Count of crimes occuring in the evening (4pm - 11pm)
+	_hr0 to _hr 23: Count of crimes occuring at each hour of the day
+	_dow0 to _dow6: Count of crimes occuring on each day of the week
 
-	Filters:
-	Drop 2015 data for now (to add in if complete data received)
-	Keep only areas with at least one crime per year for 2009-2014
 	'''
 
 	cur.execute('''
-				DROP TABLE IF EXISTS area_features;
+		DROP TABLE IF EXISTS q_features;
 
-		CREATE TABLE area_features AS
-				WITH temp AS (
-					SELECT ogc_fid, COUNT(DISTINCT Year) AS years
-					FROM crime_blocks
-					WHERE Year < 2015
-					GROUP BY ogc_fid),
-				q AS (
+		CREATE TABLE q_features AS (
 					SELECT  ogc_fid, 
 						    Year, 
 						    SUM(CTYPE_QUALITY) AS q_count,
@@ -210,8 +204,15 @@ def create_area_features():
 							SUM(Dow_6) AS q_dow6
 							from crime_blocks 
 							where ctype_quality = 1 
-							group by ogc_fid, year),
-				nv AS (
+							group by ogc_fid, year);
+		''')
+	conn.commit()
+
+	cur.execute('''
+
+		DROP TABLE IF EXISTS nv_features;
+
+		CREATE TABLE nv_features AS (
 					SELECT  ogc_fid, 
 						    Year, 
 						    SUM(CTYPE_NONVIOLENT) AS nv_count,
@@ -252,8 +253,15 @@ def create_area_features():
 							SUM(Dow_6) AS nv_dow6
 							from crime_blocks 
 							where CTYPE_NONVIOLENT = 1 
-							group by ogc_fid, Year),
-				vbi AS (
+							group by ogc_fid, Year);
+
+		''')
+	conn.commit()
+
+	cur.execute('''
+		DROP TABLE IF EXISTS vbi_features;
+
+		CREATE TABLE vbi_features AS (
 					SELECT  ogc_fid, 
 						    Year, 
 						    SUM(CTYPE_VEHICLE_BREAK_IN) AS vbi_count,
@@ -294,8 +302,15 @@ def create_area_features():
 							SUM(Dow_6) AS vbi_dow6
 							from crime_blocks 
 							where CTYPE_VEHICLE_BREAK_IN = 1 
-							group by ogc_fid, Year),
-				vt AS (
+							group by ogc_fid, Year);
+		''')
+	conn.commit()
+
+	cur.execute('''
+
+		DROP TABLE IF EXISTS vt_features;
+
+		CREATE TABLE vt_features AS (
 					SELECT  ogc_fid, 
 						    Year, 
 						    SUM(CTYPE_VEHICLE_THEFT) AS vt_count,
@@ -336,8 +351,15 @@ def create_area_features():
 							SUM(Dow_6) AS vt_dow6
 							from crime_blocks 
 							where CTYPE_VEHICLE_THEFT = 1 
-							group by ogc_fid, Year),
-				v AS (
+							group by ogc_fid, Year);
+		''')
+	conn.commit()
+
+	cur.execute('''
+
+		DROP TABLE IF EXISTS v_features;
+
+		CREATE TABLE v_features AS (
 					SELECT  ogc_fid, 
 						    Year, 
 						    SUM(CTYPE_VIOLENT) AS v_count,
@@ -378,9 +400,45 @@ def create_area_features():
 							SUM(Dow_6) AS v_dow6
 							from crime_blocks 
 							where CTYPE_VIOLENT = 1 
-							group by ogc_fid, Year)
-				SELECT c.ogc_fid,
-					   c.Year,
+							group by ogc_fid, Year);
+		''')
+	conn.commit()
+
+def create_area_features():
+	'''
+	Output: Table with one row for each area, for each year, for each crime type as follows:
+
+	For area/year/crime type (quality, nonviolent, vehicle_break_in, vehicle_theft):
+	_count: Count of all crime_blocks
+	_weekend: Count of crimes occuring on the weekend 
+	_morning: Count of crimes occuring in the morning (1-7am)
+	_workday: Count of crimes occuring in the workday (8am - 3pm)
+	_evening: Count of crimes occuring in the evening (4pm - 11pm)
+	_hr0 to _hr 23: Count of crimes occuring at each hour of the day
+	_dow0 to _dow6: Count of crimes occuring on each day of the week
+
+	Filters:
+	Drop 2015 data for now (to add in if complete data received)
+	Keep only areas with at least one crime per year for 2009-2014
+	'''
+
+	cur.execute('''
+
+		DROP TABLE IF EXISTS area_features;
+
+		CREATE TABLE area_features AS
+				WITH temp AS (
+					SELECT ogc_fid, COUNT(DISTINCT Year) AS years
+					FROM crime_blocks
+					WHERE Year < 2015
+					GROUP BY ogc_fid),
+				distinct_area_year AS (
+					SELECT ogc_fid, Year
+					FROM crime_blocks
+					GROUP BY ogc_fid, year
+					ORDER BY ogc_fid, year)
+				SELECT d.ogc_fid,
+					   d.Year,
 					   q.q_count,
 					   q.q_weekend,
 					   q.q_morning,
@@ -561,24 +619,23 @@ def create_area_features():
 					   v.v_dow4,
 					   v.v_dow5,
 					   v.v_dow6
-				FROM crime_blocks AS c
+				FROM distinct_area_year AS d
 				JOIN temp AS t
-				ON c.ogc_fid = t.ogc_fid
-				JOIN q
-				ON c.ogc_fid = q.ogc_fid AND c.Year = q.Year
-				JOIN nv
-				ON c.ogc_fid = nv.ogc_fid AND c.Year = nv.Year
-				JOIN vbi
-				ON c.ogc_fid = vbi.ogc_fid AND c.Year = vbi.Year
-				JOIN vt
-				ON c.ogc_fid = vt.ogc_fid AND c.Year = vt.Year
-				JOIN v
-				ON c.ogc_fid = v.ogc_fid AND c.Year = v.Year
-				WHERE c.Year < 2015
+				ON d.ogc_fid = t.ogc_fid
+				JOIN q_features q
+				ON d.ogc_fid = q.ogc_fid AND d.Year = q.Year
+				JOIN nv_features nv
+				ON d.ogc_fid = nv.ogc_fid AND d.Year = nv.Year
+				JOIN vbi_features vbi
+				ON d.ogc_fid = vbi.ogc_fid AND d.Year = vbi.Year
+				JOIN vt_features vt
+				ON d.ogc_fid = vt.ogc_fid AND d.Year = vt.Year
+				JOIN v_features v
+				ON d.ogc_fid = v.ogc_fid AND d.Year = v.Year
+				WHERE d.Year < 2015
 				AND t.years = 6
-				ORDER BY c.ogc_fid, c.Year;
-
-	''')
+				ORDER BY d.ogc_fid, d.Year;
+		''')
 	conn.commit()
 
 
@@ -590,11 +647,13 @@ if __name__ == "__main__":
 
 	if conn:
 		cur = conn.cursor()
-		print "Creating Crime Table"
-		create_crime_table()
-		print "Loading Shapes"
-		create_shape_table()
-		print "Creating Crime Geom Table"
-		join_crime_blocks()
-		print "Creating Feature Table"
+		#print "Creating Crime Table"
+		#create_crime_table()
+		#print "Loading Shapes"
+		#create_shape_table()
+		#print "Creating Crime Geom Table"
+		#join_crime_blocks()
+		print "Creating Features Tables"
+		create_sub_features()
+		print "Joining Feature Tables"
 		create_area_features()

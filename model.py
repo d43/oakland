@@ -81,13 +81,18 @@ def clusters(conn):
 	df_index['year'] = cdf.pop('year')
 
 	ss = StandardScaler()
-	scaled_df = pd.DataFrame(ss.fit_transform(cdf))
+	ss.fit(cdf[df_index.year == 2009])
+	scaled_df = pd.DataFrame(ss.transform(cdf))
 	scaled_df.columns = cdf.columns
 
 	print "Modeling: PCA"
 	# PCA
+	# Split and fit PCA on 2009 data, then transform entire set
+
 	pca = PCA(n_components = 5)
-	pca_df = pd.DataFrame(pca.fit_transform(scaled_df))
+	pca.fit(scaled_df[df_index.year == 2009])
+
+	pca_df = pd.DataFrame(pca.transform(scaled_df))
 
 	pca_df['ogc_fid'] = df_index['ogc_fid']
 	pca_df['year'] = df_index['year']

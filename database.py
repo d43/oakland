@@ -5,6 +5,16 @@ from preprocessing_crime import pre_process
 import os
 
 def create_database(db_name='oakland'):
+	'''
+	Connect to postgres, drop database if exists, create database with postGIS extensions.
+
+	Input:
+	- Name of database (optional)
+
+	Output:
+	- None
+
+	'''
 
 	try:
 		conn = psycopg2.connect(dbname = 'postgres',
@@ -31,6 +41,16 @@ def create_database(db_name='oakland'):
 	conn.close()
 
 def connect_database(db_name='oakland'):
+	'''
+	Connects to database, gets data, scales data (via sklearn StandardScalar), runs PCA
+	(sklearn PCA), and models (sklearn KMeans) for each year.
+
+	Input:
+	- Psycopg2 connection to database
+
+	Output:
+	- Dictionary with one entry per year, containing numbers of clusters for each geometry.
+	'''
 
 	try:
 		conn = psycopg2.connect(dbname = 'oakland',
@@ -47,12 +67,12 @@ def create_crime_table():
 	'''
 	Read in crime data from csv
 	Preprocessing:
-		change Date type to pandas datetime
-		add Year column
-		add Year_Month column
-		drop text columns
-		map CrimeCat to grouped Crime types (see crime_dict.py for details)
-		create dummy variables for CrimeCat
+		Change Date type to pandas datetime
+		Add Year column
+		Add Year_Month column
+		Drop text columns
+		Map CrimeCat to grouped Crime types (see crime_dict.py for details)
+		Create dummy variables for CrimeCat
 	Create postgres table 
 	Load data into postgres
 	Add geom column
@@ -638,8 +658,6 @@ def create_area_features():
 		''')
 	conn.commit()
 
-	# Set all NaN's to zero
-
 
 
 if __name__ == "__main__":
@@ -656,7 +674,7 @@ if __name__ == "__main__":
 		#create_shape_table()
 		#print "Creating Crime Geom Table"
 		#join_crime_blocks()
-		print "Creating Features Tables"
-		create_sub_features()
-		print "Joining Feature Tables"
-		create_area_features()
+		#print "Creating Features Tables"
+		#create_sub_features()
+		#print "Joining Feature Tables"
+		#create_area_features()

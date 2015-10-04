@@ -57,7 +57,6 @@ def to_json(idx, row, clusters):
 		properties[year] = color[values[idx]]
 
 	# Create properties dictionary to store features for display in visualization.
-
 	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }
 
 	return geo_json

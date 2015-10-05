@@ -11,11 +11,10 @@ def set_query():
 
 	Output:
 	- Query string
+
+	Convert postGIS polygon to GeoJSON geometry.
+	Join on area_features to ensure that only areas with crime counts are included.
 	'''
-
-	# Convert postGIS polygon to GeoJSON geometry.
-	# Join on area_features to ensure that only areas with crime counts are included
-
 	map_query = '''
 				SELECT DISTINCT shp_table.ogc_fid as area_id,
 				ST_AsGeoJSON(shp_table.wkb_geometry) as geom
@@ -44,8 +43,8 @@ def query_db(conn, query):
 def to_json(idx, geom, clusters, crime_data):
 	'''
 	Input:
-	- Index of neighborhood, geom of neighborhood
-	- Dictionaries of clusters and crime_data (one entry per year)
+	- Index of neighborhood, geometry of neighborhood
+	- Dictionaries of clusters and crime_data (one entry per year, from model.py)
 
 	Output:
 	- GeoJSON file

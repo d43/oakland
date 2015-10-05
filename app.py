@@ -12,7 +12,7 @@ c = conn.cursor()
 
 # When model is finalized, add a step here to import from pickled model
 # Check if model exists, if not, repull and pickle it
-# see kevin's code: safe_walk_app/safe_walk_app.py save_geo_dict
+# see example: safe_walk_app/safe_walk_app.py save_geo_dict
 
 clus, crime_data = clusters(conn)
 map_jsons = join_json(conn, clus, crime_data)

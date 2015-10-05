@@ -45,7 +45,7 @@ def clusters(conn):
 	# PCA
 	# Fit PCA on 2009 data, then transform entire set
 	print "Modeling: PCA"
-	n_components = 20
+	n_components = 19
 	pca = PCA(n_components = n_components)
 	pca.fit(scaled_df[df_index.year == 2009])
 	pca_df = pd.DataFrame(pca.transform(scaled_df))
@@ -73,4 +73,9 @@ def clusters(conn):
 
 	# Aggregate yearly clusters into one dictionary.
 	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }
+	
+	# Create dictionary of crime counts for display later
+	
+
+
 	return clus

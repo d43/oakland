@@ -67,12 +67,7 @@ def create_crime_table():
 	'''
 	Read in crime data from csv
 	Preprocessing:
-		Change Date type to pandas datetime
-		Add Year column
-		Add Year_Month column
-		Drop text columns
-		Map CrimeCat to grouped Crime types (see crime_dict.py for details)
-		Create dummy variables for CrimeCat
+
 	Create postgres table 
 	Load data into postgres
 	Add geom column
@@ -80,7 +75,6 @@ def create_crime_table():
 	'''
 	cdf = pd.read_csv("data/OPD_150308.csv")
 	pre_process(cdf) # From preprocessing_crime.py
-
 
 	cur.execute('''
 		DROP TABLE IF EXISTS crime;

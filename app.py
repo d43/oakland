@@ -11,7 +11,7 @@ conn = psycopg2.connect(dbname=conn_dict['dbname'], user=conn_dict['user'], host
 c = conn.cursor()
 
 # When model is finalized, add a step here to import from pickled model
-# check if model exists, if not, repull and pickle it
+# Check if model exists, if not, repull and pickle it
 # see kevin's code: safe_walk_app/safe_walk_app.py save_geo_dict
 
 clus = clusters(conn)

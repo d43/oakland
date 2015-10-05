@@ -19,7 +19,7 @@
         position: absolute;
         top: 80px;
         left: 99%;
-        margin-left: -180px;
+        margin-left: -500px;
         z-index: 5;
         background-color: #fff;
         padding: 5px;
@@ -30,59 +30,97 @@
   </head>
   <body>
     <div id="map"></div>
+
     <script>
+      var map;
+      function initMap() { 
+        // Initialize new map centered on Oakland with appropriate zoom
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 37.780159, lng: -122.209740},
+          zoom: 12
+        }); 
+        // Add Census shapes from GeoJSON
+        // Look into how map_jsons is passed over. Not using eval now.
+        map_jsons = {{ map_jsons | safe }}
+        map.data.addGeoJson(map_jsons);
 
-var map;
-function initMap() { 
-  // Initialize new map centered on Oakland with appropriate zoom
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 37.780159, lng: -122.209740},
-    zoom: 12
-  }); 
-  // Add Census shapes from GeoJSON
-  // Look into how map_jsons is passed over. Not using eval now.
-  map_jsons = {{ map_jsons | safe }}
-  map.data.addGeoJson(map_jsons);
+        // Style disappears on mouse over for better visibility.
+        map.data.addListener('mouseover', function(event) {
+          map.data.revertStyle();
+          map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
+          // Display location data via mouseover:
+          //document.getElementById('year').textContent =
+            //event.feature.getProperty('crimes');
+          });
+        // Style reverts on mouse out.
+        map.data.addListener('mouseout', function(event) {
+          map.data.revertStyle();
+        });
 
-  // Style disappears on mouse over for better visibility.
-  map.data.addListener('mouseover', function(event) {
-    map.data.revertStyle();
-    map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
-    // Display location data via mouseover:
-    //document.getElementById('crimes').textContent =
-      //event.feature.getProperty('crimes');
-    });
-  // Style reverts on mouse out.
-  map.data.addListener('mouseout', function(event) {
-    map.data.revertStyle();
-  });
+        // Assign colors from GeoJSON
+        map.data.setStyle(function(feature) {
+        return {
+          fillColor: feature.getProperty('2009'),
+          strokeWeight: 1
+          };
+        });
+      }
 
-  // Assign colors from GeoJSON
-  map.data.setStyle(function(feature) {
-  return {
-    fillColor: feature.getProperty('2009'),
-    strokeWeight: 1
-    };
-  });
-}
+      // Year slider
+      function show_year() {
+        var year = document.getElementById("year_slider").value;
+        var element = document.getElementById("year"); //What is year_value?
+        element.innerHTML = year; //What does this do?
 
-// Year slider
-function show_year() {
-  var year = document.getElementById("year_slider").value;
-  var element = document.getElementById("year"); //What is year_value?
-  element.innerHTML = year; //What does this do?
-
-  map.data.setStyle(function(feature) {
-    return {
-      fillColor: feature.getProperty(year),
-      strokeWeight: 1
-    };
-  });
-}
-
+        map.data.setStyle(function(feature) {
+          return {
+            fillColor: feature.getProperty(year),
+            strokeWeight: 1
+          };
+        });
+      }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBI62Elt07dmxFJC3J0-6GQIog-00OeUnU&callback=initMap"
-        async defer></script>
+    async defer></script>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Crime Category');
+        data.addColumn('number', 'Crimes');
+        data.addRows([
+          ['Quality', 4],
+          ['Nonviolent', 1],
+          ['Car Break In', 1],
+          ['Car Theft', 1],
+          ['Violent', 2]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Neighborhood Details',
+                       'width':400,
+                       'height':300};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+
+
 
     <div id="panel">
       <div>
@@ -93,5 +131,9 @@ function show_year() {
         <input type="range" id="year_slider" min="2009" max="2014" step="1" value="2009"
             onchange="show_year();"> <br>
         <p class="year">Year: <span id="year" value="2009"></span></p>
+      </div>
+    <div id="chart_div"></div>
+    </div>
+
   </body>
 </html>

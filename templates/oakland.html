@@ -48,6 +48,10 @@
         map.data.addListener('mouseover', function(event) {
           map.data.revertStyle();
           map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
+          // This command below isn't doing what I want it to:
+          var year = document.getElementById("year_slider").value;
+          drawChart(event.feature.getProperty(year));
+          // Pass in dictionary or tuple or list
           // Display location data via mouseover:
           //document.getElementById('year').textContent =
             //event.feature.getProperty('crimes');
@@ -95,17 +99,23 @@
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      function drawChart() {
+      function drawChart(q_count) {
+        // console.log('In drawChart, q_count is: ', q_count);
         // Create the data table.
         var data = new google.visualization.DataTable();
+        var q_count = typeof q_count !== 'undefined' ? q_count: 0;
+        var nv_count = 4;
+        var vbi_count = 3;
+        var vt_count = 2;
+        var v_count = 1;
         data.addColumn('string', 'Crime Category');
         data.addColumn('number', 'Crimes');
         data.addRows([
-          ['Quality', 4],
-          ['Nonviolent', 1],
-          ['Car Break In', 1],
-          ['Car Theft', 1],
-          ['Violent', 2]
+          ['Quality', q_count],
+          ['Nonviolent', nv_count],
+          ['Car Break In', vbi_count],
+          ['Car Theft', vt_count],
+          ['Violent', v_count]
         ]);
 
         // Set chart options

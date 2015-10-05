@@ -41,7 +41,7 @@ def query_db(conn, query):
 	df.columns = ['area_id', 'geom']
 	return df
 
-def to_json(idx, row, clusters):
+def to_json(idx, geom, clusters, crime_data):
 	'''
 	Input:
 	- Index of data frame, row of dataframe, dictionary of clusters (one entry per year)
@@ -53,18 +53,21 @@ def to_json(idx, row, clusters):
 
 	# Create properties dictionary to assign color to location corresponding to yearly cluster.
 	properties = {}
+	properties['data'] = {}
 	
 	for year, values in clusters.iteritems():
 		properties[year] = color[values[idx]]
-		#year_q_count = str(year) + '_q_count'
-		#properties[year_q_count] = 
+		properties['data'][year] = crime_data[year].iloc[[idx]].values.tolist()
+
+	#replace this with passed in crime_data info
+	#properties['data'] = [1, 2, 3, 4, 5]
 
 	# Create properties dictionary to store features for display in visualization.
-	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }
+	geo_json = {'type':'Feature', 'geometry':json.loads(geom), 'properties':properties }
 
 	return geo_json
 
-def join_json(conn, clusters):
+def join_json(conn, clusters, crime_data):
 	'''
 	Input:
 	- Dictionary of clusters (from model.py)
@@ -77,7 +80,7 @@ def join_json(conn, clusters):
 	geo_list = []
 
 	for idx, row in df.iterrows():
-		geo_list.append(to_json(idx, row, clusters))
+		geo_list.append(to_json(idx, row['geom'], clusters, crime_data))
 
 	return json.dumps( { "type":"FeatureCollection", 
 				"features":geo_list } )

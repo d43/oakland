@@ -72,10 +72,12 @@ def clusters(conn):
 	clus14 = km.predict(pca_df[pca_df.year == 2014].sort('ogc_fid')[columns])
 
 	# Aggregate yearly clusters into one dictionary.
-	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }
-	
+	clus = {2009:clus9, 2010:clus10, 2011:clus11, 2012:clus12, 2013:clus13, 2014:clus14 }
+
 	# Create dictionary of crime counts for display later
 	# quality_count {'2009':q_count}
+	crime_data = {}
+	for year in [2009, 2010, 2011, 2012, 2013, 2014]:
+		crime_data[year] = cdf[df_index.year == year]
 
-
-	return clus
+	return clus, crime_data

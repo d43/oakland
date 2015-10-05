@@ -14,7 +14,7 @@
         height: 100%;
       }
 
-      /* Panel to display year slider and crime distribution. */
+      /* Panel to display year slider and crime distribution */
       #panel {
         position: absolute;
         top: 80px;
@@ -40,25 +40,23 @@
           zoom: 12
         }); 
         // Add Census shapes from GeoJSON
-        // Look into how map_jsons is passed over. Not using eval now.
         map_jsons = {{ map_jsons | safe }}
         map.data.addGeoJson(map_jsons);
 
-        // Style disappears on mouse over for better visibility.
+        // Style disappears on mouseover for better visibility
+        // Chart redrawn on mouseover with data for selected neighborhood
         map.data.addListener('mouseover', function(event) {
           map.data.revertStyle();
           map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
-          // This command below isn't doing what I want it to:
+          // Redraw chart on mouseover, given year from slider:
           var year = document.getElementById("year_slider").value;
           drawChart(event.feature.getProperty('data')[year][0]);
-          // Pass in dictionary or tuple or list
-          // Display location data via mouseover:
-          //document.getElementById('year').textContent =
-            //event.feature.getProperty('crimes');
           });
-        // Style reverts on mouse out.
+        // Style reverts on mouse out
         map.data.addListener('mouseout', function(event) {
           map.data.revertStyle();
+          // Redraw chart with no data on mouse out
+          drawChart();
         });
 
         // Assign colors from GeoJSON
@@ -73,8 +71,8 @@
       // Year slider
       function show_year() {
         var year = document.getElementById("year_slider").value;
-        var element = document.getElementById("year"); //What is year_value?
-        element.innerHTML = year; //What does this do?
+        var element = document.getElementById("year");
+        element.innerHTML = year;
 
         map.data.setStyle(function(feature) {
           return {
@@ -90,17 +88,16 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
 
-      // Load the Visualization API and the piechart package.
+      // Load the Visualization API and the piechart package
       google.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Set a callback to run when the Google Visualization API is loaded.
+      // Set a callback to run when the Google Visualization API is loaded
       google.setOnLoadCallback(drawChart);
 
       // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
+      // instantiates the chart, passes in the data and
+      // draws it
       function drawChart(crime_data) {
-        // console.log('In drawChart, q_count is: ', q_count);
         // Create the data table.
         var data = new google.visualization.DataTable();
         var crime_data = typeof crime_data !== 'undefined' ? crime_data: 0;
@@ -124,7 +121,7 @@
                        'width':400,
                        'height':300};
 
-        // Instantiate and draw our chart, passing in some options.
+        // Instantiate and draw our chart, passing in some options
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }

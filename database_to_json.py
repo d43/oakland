@@ -44,7 +44,8 @@ def query_db(conn, query):
 def to_json(idx, geom, clusters, crime_data):
 	'''
 	Input:
-	- Index of data frame, row of dataframe, dictionary of clusters (one entry per year)
+	- Index of neighborhood, geom of neighborhood
+	- Dictionaries of clusters and crime_data (one entry per year)
 
 	Output:
 	- GeoJSON file
@@ -71,6 +72,7 @@ def join_json(conn, clusters, crime_data):
 	'''
 	Input:
 	- Dictionary of clusters (from model.py)
+	- Dictionary of crime_data (from model.py)
 
 	Output:
 	- GeoJSON Feature Collection (ready for mapping)

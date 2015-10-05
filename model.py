@@ -75,7 +75,7 @@ def clusters(conn):
 	clus = {'2009':clus9, '2010':clus10, '2011':clus11, '2012':clus12, '2013':clus13, '2014':clus14 }
 	
 	# Create dictionary of crime counts for display later
-	
+	# quality_count {'2009':q_count}
 
 
 	return clus

@@ -56,8 +56,8 @@ def to_json(idx, row, clusters):
 	
 	for year, values in clusters.iteritems():
 		properties[year] = color[values[idx]]
-		year_qcount = str(year) + '_q_count'
-		properties[year_q_count] = 
+		#year_q_count = str(year) + '_q_count'
+		#properties[year_q_count] = 
 
 	# Create properties dictionary to store features for display in visualization.
 	geo_json = {'type':'Feature', 'geometry':json.loads(row['geom']), 'properties':properties }

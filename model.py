@@ -4,6 +4,12 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
+
+def connect_database(conn):
+	pass
+
+
+
 def clusters(conn):
 	'''
 	Basic k-means clustering model over all years.
@@ -18,6 +24,7 @@ def clusters(conn):
 	(sklearn PCA), and models (sklearn KMeans) for each year.
 
 	'''
+
 
 	print "Modeling: connecting to DB"
 	# Get Data

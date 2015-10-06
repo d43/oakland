@@ -4,10 +4,80 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
+#def full_model(conn):
+#	connect_database(conn)
+#	get_data()
+#	scale_data()
+#	run_pca()
+#	dbscan()
 
-def connect_database(conn):
-	pass
+def get_data(conn):
+	'''
+	Input:
+	- Psycopg2 connection to database
 
+	Output:
+	- Labeled pandas dataframe
+
+	Connects to database, retrieves data and labels, attaches labels, returns dataframe.
+	'''
+	print "Connecting to DB, retrieving data"
+	# Get Data
+	cur = conn.cursor()
+	cur.execute("SELECT * FROM area_features;")
+	df = pd.DataFrame(cur.fetchall())
+	cdf = df.copy()
+	# Get Data Labels
+	cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='area_features';")
+	col_df = pd.DataFrame(cur.fetchall())
+	col_df.columns = ['labels']
+	cdf.columns = col_df['labels'].tolist()
+
+	return cdf
+
+def scale(cdf):
+	'''
+	Input:
+	- Pandas dataframe with two indexes
+
+	Output:
+	- Scaled dataframe, index dataframe
+	'''
+	# Pop index labels off prior to scaling and PCA
+	df_index = pd.DataFrame(cdf.pop('ogc_fid'))
+	df_index['year'] = cdf.pop('year')
+
+	print "Modeling: scaling data"
+	# Scale all features
+
+	ss = StandardScaler()
+	scaled_df = pd.DataFrame(ss.fit_transform(cdf))
+	scaled_df.columns = cdf.columns
+
+	return scaled_df, df_index
+
+def perform_pca(scaled_df, df_index, n_components=5):
+	'''
+	Input:
+	- Scaled pandas dataframe, index of dataframe, number of PCA components to return
+
+	Output:
+	- 
+	'''
+	# PCA
+	# Fit PCA on 2009 data, then transform entire set
+	print "Modeling: PCA"
+	pca = PCA(n_components = n_components)
+	pca.fit(scaled_df[df_index.year == 2009][['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']])
+
+	# pca_df = pd.DataFrame(pca.transform(scaled_df[['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']]))
+
+	pca_df = scaled_df
+	# Reattach year and ogc_fid columns
+	pca_df['year'] = df_index['year']
+	pca_df['ogc_fid'] = df_index['ogc_fid']
+
+	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']
 
 
 def clusters(conn):
@@ -24,8 +94,6 @@ def clusters(conn):
 	(sklearn PCA), and models (sklearn KMeans) for each year.
 
 	'''
-
-
 	print "Modeling: connecting to DB"
 	# Get Data
 	cur = conn.cursor()
@@ -51,18 +119,24 @@ def clusters(conn):
 
 	# PCA
 	# Fit PCA on 2009 data, then transform entire set
-	print "Modeling: PCA"
-	n_components = 19
-	pca = PCA(n_components = n_components)
-	pca.fit(scaled_df[df_index.year == 2009])
-	pca_df = pd.DataFrame(pca.transform(scaled_df))
+	# print "Modeling: PCA"
+	# n_components = 5
+	# pca = PCA(n_components = n_components)
+	# pca.fit(scaled_df[df_index.year == 2009][['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']])
 
+	# pca_df = pd.DataFrame(pca.transform(scaled_df[['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']]))
+
+	pca_df = scaled_df
 	# Reattach year and ogc_fid columns
 	pca_df['year'] = df_index['year']
 	pca_df['ogc_fid'] = df_index['ogc_fid']
 
+	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']
+
 	# Pull out non-index columns to pass into model
-	columns =  pca_df.columns.tolist()[0:n_components]
+	#columns =  pca_df.columns.tolist()[0:n_components]
+	#[0, 36, 72, 108, 144]
+	#print columns
 
 	# Modeling
 	# Create simple KMeans model, and fit to earliest data set (2009).
@@ -88,3 +162,7 @@ def clusters(conn):
 		crime_data[year] = cdf[df_index.year == year]
 
 	return clus, crime_data
+
+def model(conn):
+	pass
+

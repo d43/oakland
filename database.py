@@ -647,7 +647,7 @@ def create_area_features():
 				ON d.ogc_fid = vt.ogc_fid AND d.Year = vt.Year
 				LEFT OUTER JOIN v_features v
 				ON d.ogc_fid = v.ogc_fid AND d.Year = v.Year
-				WHERE d.Year < 2015
+				WHERE d.Year < 2015 AND d.ogc_fid NOT IN ('1820', '21161', '2023')
 				ORDER BY d.ogc_fid, d.Year);
 		''')
 	conn.commit()
@@ -670,5 +670,5 @@ if __name__ == "__main__":
 		#join_crime_blocks()
 		#print "Creating Features Tables"
 		#create_sub_features()
-		#print "Joining Feature Tables"
-		#create_area_features()
+		print "Joining Feature Tables"
+		create_area_features()

@@ -163,6 +163,3 @@ def clusters(conn):
 
 	return clus, crime_data
 
-def model(conn):
-	pass
-

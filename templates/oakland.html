@@ -17,9 +17,9 @@
       /* Panel to display year slider and crime distribution */
       #panel {
         position: absolute;
-        top: 80px;
+        top: 0px;
         left: 99%;
-        margin-left: -500px;
+        margin-left: -300px;
         z-index: 5;
         background-color: #fff;
         padding: 5px;
@@ -66,6 +66,7 @@
           strokeWeight: 1
           };
         });
+        show_year();
       }
 
       // Year slider
@@ -117,9 +118,15 @@
         ]);
 
         // Set chart options
-        var options = {'title':'Neighborhood Details',
-                       'width':400,
-                       'height':300};
+        var options = {'title':'Crime Counts by Category',
+                       'width':300,
+                       'height':300,
+                       'legend':'none',
+                       'vAxis':{
+                          'title':"Count",
+                          'viewWindowMode':'explicit',
+                          'viewWindow':{'max':350,'min':0}}
+                       };
 
         // Instantiate and draw our chart, passing in some options
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));

@@ -59,8 +59,6 @@ def to_json(idx, geom, clusters, crime_data):
 		properties[year] = color[values[idx]]
 		properties['data'][year] = crime_data[year].iloc[[idx]].values.tolist()
 
-	#replace this with passed in crime_data info
-	#properties['data'] = [1, 2, 3, 4, 5]
 
 	# Create properties dictionary to store features for display in visualization.
 	geo_json = {'type':'Feature', 'geometry':json.loads(geom), 'properties':properties }

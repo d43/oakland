@@ -652,6 +652,54 @@ def create_area_features():
 		''')
 	conn.commit()
 
+def create_area_features_two():
+	'''
+	Output: Table with one row for each area, for each year, as follows:
+
+	For area/year:
+	total: Count of all crimes
+	q_percent: Percent of total that are quality crimes
+	nv_percent: Percent of total that are nonviolent crimes 
+	vbi_percent: Percent of total that are vehicle break in crimes
+	vt_percent: Percent of total that are vehicle theft crimes
+	v_percent: Percent of total that are violent crimes
+	weekend_percent: Percent of crimes occuring on the weekend 
+	morning_percent: Percent of crimes occuring in the morning (1-7am)
+	workday_percent: Percent of crimes occuring in the workday (8am - 3pm)
+	evening_percent: Percent of crimes occuring in the evening (4pm - 11pm)
+
+	Filters (brought over from area_features table):
+	Drop 2015 data for now (to add in if complete data received)
+	Keep only areas with at least one crime per year for 2009-2014
+	'''
+
+	cur.execute('''
+
+		DROP TABLE IF EXISTS area_features_two;
+
+			CREATE TABLE area_features_two AS (
+				WITH tmp_total AS (
+					SELECT ogc_fid,
+						   year,
+						   (q_count + nv_count + vbi_count + vt_count + v_count) AS total,
+						   (q_hr0 + nv_hr0 + vbi_hr0 + vt_hr0 + v_hr0) AS hr0_total
+					FROM area_features)
+				SELECT t.total,
+					   a.q_count/t.total AS q_percent,
+					   a.nv_count/t.total as nv_percent,
+					   a.vbi_count/t.total as vbi_percent,
+					   a.vt_count/t.total as vt_percent,
+					   a.v_count/t.total as v_percent,
+					   (a.q_weekend + a.nv_weekend + a.vbi_weekend + a.vt_weekend + a.v_weekend)/(t.total-t.hr0_total) as weekend_percent,
+					   (a.q_morning + a.nv_morning + a.vbi_morning + a.vt_morning + a.v_morning)/(t.total-t.hr0_total) as morning_percent,
+					   (a.q_workday + a.nv_workday + a.vbi_workday + a.vt_workday + a.v_workday)/(t.total-t.hr0_total) as workday_percent,
+					   (a.q_evening + a.nv_evening + a.vbi_evening + a.vt_evening + a.v_evening)/(t.total-t.hr0_total) as evening_percent
+					   FROM area_features a
+					   JOIN tmp_total t
+					   ON a.ogc_fid = t.ogc_fid AND a.year = t.year
+					   ORDER BY a.ogc_fid, a.year);
+		''')
+	conn.commit()
 
 
 if __name__ == "__main__":
@@ -672,3 +720,5 @@ if __name__ == "__main__":
 		#create_sub_features()
 		print "Joining Feature Tables"
 		create_area_features()
+		print "Creating Second Feature Table"
+		create_area_features_two()

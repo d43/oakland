@@ -144,7 +144,7 @@ def clusters(conn):
 	# Return a dictionary of the predictions (one entry per year).
 
 	print "Modeling: kMeans"
-	km = KMeans(n_clusters=8)
+	km = KMeans(n_clusters=7, random_state=203)
 	clus9 = km.fit_predict(pca_df[pca_df.year == 2009].sort('ogc_fid')[columns])
 	clus10 = km.predict(pca_df[pca_df.year == 2010].sort('ogc_fid')[columns])
 	clus11 = km.predict(pca_df[pca_df.year == 2011].sort('ogc_fid')[columns])

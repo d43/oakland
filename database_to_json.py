@@ -49,7 +49,14 @@ def to_json(idx, geom, clusters, crime_data):
 	Output:
 	- GeoJSON file
 	'''
-	color = ['#FFF703', '#1AFF00', '#00F7FF', '#0800FF', '#FF00EE', '#FFC300', '#A938FF', '#FF0000']
+	# Yellow, Green, red, dark blue, pink, light blue, bad purple, bad orange
+	#color = ['#FFF703', '#1AFF00', '#FF0000', '#0800FF', '#FF00EE', '#00F7FF', '#A938FF', '#FFC300']
+
+	# Green to red
+	color = ['#CC0066', '#1AFF00', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
+
+	# Colorblind friendly
+	#color = ['#FFFF00', '#3366FF', '#000066', '#66FFFF', '#FFFF00', '#CC9900', '#CC9900']
 
 	# Create properties dictionary to assign color to location corresponding to yearly cluster.
 	properties = {}

@@ -50,13 +50,17 @@
           map.data.overrideStyle(event.feature, {strokeWeight: 2, fillColor: '#000000', fillOpacity: 0.3});
           // Redraw chart on mouseover, given year from slider:
           var year = document.getElementById("year_slider").value;
-          drawChart(event.feature.getProperty('data')[year][0]);
+          drawChart_count(event.feature.getProperty('data')[year][0]);
+          drawChart_weekend(event.feature.getProperty('data')[year][0]);
+          drawChart_day(event.feature.getProperty('data')[year][0]);
           });
         // Style reverts on mouse out
         map.data.addListener('mouseout', function(event) {
           map.data.revertStyle();
           // Redraw chart with no data on mouse out
-          drawChart();
+          drawChart_count();
+          drawChart_weekend();
+          drawChart_day();
         });
 
         // Assign colors from GeoJSON
@@ -94,20 +98,22 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded
-      google.setOnLoadCallback(drawChart);
+      google.setOnLoadCallback(drawChart_percent);
+      google.setOnLoadCallback(drawChart_weekend);
+      google.setOnLoadCallback(drawChart_day);
 
       // Callback that creates and populates a data table,
-      // instantiates the chart, passes in the data and
+      // instantiates the crime by type chart, passes in the data and
       // draws it
-      function drawChart(crime_data) {
+      function drawChart_count(crime_data) {
         // Create the data table.
         var data = new google.visualization.DataTable();
         var crime_data = typeof crime_data !== 'undefined' ? crime_data: 0;
         var q_count = crime_data[0]
-        var nv_count = crime_data[36];
-        var vbi_count = crime_data[72];
-        var vt_count = crime_data[108];
-        var v_count = crime_data[144];
+        var nv_count = crime_data[1];
+        var vbi_count = crime_data[2];
+        var vt_count = crime_data[3];
+        var v_count = crime_data[4];
         data.addColumn('string', 'Crime Category');
         data.addColumn('number', 'Crimes');
         data.addRows([
@@ -126,11 +132,67 @@
                        'vAxis':{
                           'title':"Count",
                           'viewWindowMode':'explicit',
-                          'viewWindow':{'max':350,'min':0}}
+                          'viewWindow':{'max':300,'min':0}}
                        };
 
         // Instantiate and draw our chart, passing in some options
-        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_one'));
+        chart.draw(data, options);
+      }
+
+      // Callback that creates and populates a data table,
+      // instantiates the percent of weekend crime chart, passes in the data and
+      // draws it
+      function drawChart_weekend(crime_data) {
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        var crime_data = typeof crime_data !== 'undefined' ? crime_data: 0;
+        var weekend = crime_data[5]
+        var not_weekend = 1-weekend;
+        data.addColumn('string', 'Crime Category');
+        data.addColumn('number', 'Crimes');
+        data.addRows([
+          ['Weekend', weekend],
+          ['Weekday', not_weekend],
+        ]);
+
+        // Set chart options
+        var options = {'title':'Percent Weekend Crime',
+                       'width':350,
+                       'height':200
+                       };
+
+        // Instantiate and draw our chart, passing in some options
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div_two'));
+        chart.draw(data, options);
+      }
+
+      // Callback that creates and populates a data table,
+      // instantiates the crime percent by time of day chart, passes in the data and
+      // draws it
+      function drawChart_day(crime_data) {
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        var crime_data = typeof crime_data !== 'undefined' ? crime_data: 0;
+        var morning = crime_data[6];
+        var workday = crime_data[7];
+        var evening = crime_data[8];
+        data.addColumn('string', 'Crime Category');
+        data.addColumn('number', 'Crimes');
+        data.addRows([
+          ['Morning', morning],
+          ['Workday', workday],
+          ['Evening', evening]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Crime Percent by Time of Day',
+                       'width':350,
+                       'height':200
+                       };
+
+        // Instantiate and draw our chart, passing in some options
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_three'));
         chart.draw(data, options);
       }
     </script>
@@ -148,7 +210,9 @@
             onchange="show_year();"> <br>
         <p class="year">Year: <span id="year" value="2009"></span></p>
       </div>
-    <div id="chart_div"></div>
+    <div id="chart_div_one"></div>
+    <div id="chart_div_two"></div>
+    <div id="chart_div_three"></div>
     </div>
 
   </body>

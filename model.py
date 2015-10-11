@@ -97,11 +97,11 @@ def clusters(conn):
 	print "Modeling: connecting to DB"
 	# Get Data
 	cur = conn.cursor()
-	cur.execute("SELECT * FROM area_features;")
+	cur.execute("SELECT * FROM area_features_three;")
 	df = pd.DataFrame(cur.fetchall())
 	cdf = df.copy()
 	# Get Data Labels
-	cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='area_features';")
+	cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='area_features_three';")
 	col_df = pd.DataFrame(cur.fetchall())
 	col_df.columns = ['labels']
 	cdf.columns = col_df['labels'].tolist()
@@ -131,7 +131,9 @@ def clusters(conn):
 	pca_df['year'] = df_index['year']
 	pca_df['ogc_fid'] = df_index['ogc_fid']
 
-	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']
+	#columns = ['total', 'q_percent', 'nv_percent', 'vbi_percent', 'vt_percent', 'v_percent', 'weekend_percent', 'workday_percent', 'evening_percent']
+
+	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count', 'weekend_percent', 'morning_percent', 'daytime_percent']
 
 	# Pull out non-index columns to pass into model
 	#columns =  pca_df.columns.tolist()[0:n_components]

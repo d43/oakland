@@ -40,7 +40,7 @@ def query_db(conn, query):
 	df.columns = ['area_id', 'geom']
 	return df
 
-def to_json(idx, geom, clusters, crime_data):
+def to_json(idx, geom, clusters, crime_data, color_scheme='default'):
 	'''
 	Input:
 	- Index of neighborhood, geometry of neighborhood
@@ -49,14 +49,18 @@ def to_json(idx, geom, clusters, crime_data):
 	Output:
 	- GeoJSON file
 	'''
-	# Yellow, Green, red, dark blue, pink, light blue, bad purple, bad orange
-	#color = ['#FFF703', '#1AFF00', '#FF0000', '#0800FF', '#FF00EE', '#00F7FF', '#A938FF', '#FFC300']
 
-	# Green to red
-	color = ['#CC0066', '#1AFF00', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
+	# Set color scheme for map
+	if color_scheme = 'default':
+		# Green, light blue, yellow, red, pink
+		color = ['#CC0066', '#00F7FF', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
+	elif color_scheme = 'color_blind':
+		# Colorblind friendly
+		color = ['#FFFF00', '#3366FF', '#000066', '#66FFFF', '#FFFF00', '#CC9900', '#CC9900']
+	elif color_scheme = 'green_to_red':
+		# Green to red
+		color = ['#CC0066', '#00F7FF', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
 
-	# Colorblind friendly
-	#color = ['#FFFF00', '#3366FF', '#000066', '#66FFFF', '#FFFF00', '#CC9900', '#CC9900']
 
 	# Create properties dictionary to assign color to location corresponding to yearly cluster.
 	properties = {}

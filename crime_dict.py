@@ -1,4 +1,12 @@
 def crime_dict(df):
+    '''
+    Input:
+    - Pandas dataframe
+
+    Output:
+    - Dictionary of Oakland Police Department crime types to
+      meta crime categories
+    '''
     d = {}
     VIOLENT = 5
     VEHICLE_THEFT = 4
@@ -44,6 +52,7 @@ def crime_dict(df):
             d[col] = "OTHER"
         elif col.find("COURT") == 0:
             d[col] = "WARRANT"
-        else: d[col] = col
+        else:
+            d[col] = col
 
     return d

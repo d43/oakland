@@ -3,7 +3,6 @@ import pandas as pd
 import json
 
 
-
 def set_query():
 	'''
 	Input:
@@ -23,7 +22,6 @@ def set_query():
 				ON shp_table.ogc_fid = area_features.ogc_fid
 				ORDER BY area_id
 				;'''
-
 	return map_query
 
 def query_db(conn, query):
@@ -49,27 +47,26 @@ def to_json(idx, geom, clusters, crime_data, color_scheme='default'):
 	Output:
 	- GeoJSON file
 	'''
-
 	# Set color scheme for map
-	if color_scheme = 'default':
+	if color_scheme == 'default':
 		# Green, light blue, yellow, red, pink
 		color = ['#CC0066', '#00F7FF', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
-	elif color_scheme = 'color_blind':
+	elif color_scheme == 'color_blind':
 		# Colorblind friendly
 		color = ['#FFFF00', '#3366FF', '#000066', '#66FFFF', '#FFFF00', '#CC9900', '#CC9900']
-	elif color_scheme = 'green_to_red':
+	elif color_scheme == 'green_to_red':
 		# Green to red
 		color = ['#CC0066', '#00F7FF', '#006600', '#FFF703', '#CC0066', '#FF0000', '#FF0000']
 
-
-	# Create properties dictionary to assign color to location corresponding to yearly cluster.
+	# Create properties dictionary to:
+	#	 - Assign color to location corresponding to yearly cluster
+	#	 - Store yearly crime data for retrieval by javascript/Google Charts API
 	properties = {}
 	properties['data'] = {}
 	
 	for year, values in clusters.iteritems():
 		properties[year] = color[values[idx]]
 		properties['data'][year] = crime_data[year].iloc[[idx]].values.tolist()
-
 
 	# Create properties dictionary to store features for display in visualization.
 	geo_json = {'type':'Feature', 'geometry':json.loads(geom), 'properties':properties }
@@ -85,7 +82,6 @@ def join_json(conn, clusters, crime_data):
 	Output:
 	- GeoJSON Feature Collection (ready for mapping)
 	'''
-
 	df = query_db(conn, set_query())
 	geo_list = []
 

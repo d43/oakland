@@ -54,10 +54,10 @@
           drawChart_weekend(event.feature.getProperty('data')[year][0]);
           drawChart_day(event.feature.getProperty('data')[year][0]);
           });
-        // Style reverts on mouse out
+        // Style reverts on mouse out for map and charts
         map.data.addListener('mouseout', function(event) {
           map.data.revertStyle();
-          // Redraw chart with no data on mouse out
+          // Redraw chart with no data
           drawChart_count();
           drawChart_weekend();
           drawChart_day();
@@ -67,22 +67,24 @@
         map.data.setStyle(function(feature) {
         return {
           fillColor: feature.getProperty('2009'),
+          fillOpacity: .5,
           strokeWeight: 1
           };
         });
         show_year();
       }
 
-      // Year slider
+      // Create year slider
       function show_year() {
         var year = document.getElementById("year_slider").value;
         var element = document.getElementById("year");
         element.innerHTML = year;
 
+        // Recolor map based on selected year
         map.data.setStyle(function(feature) {
           return {
             fillColor: feature.getProperty(year),
-            fillOpacity: .5,
+            fillOpacity: .5,            
             strokeWeight: 1
           };
         });
@@ -94,7 +96,7 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
 
-      // Load the Visualization API and the piechart package
+      // Load the Visualization API and the chart package
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded
@@ -135,7 +137,7 @@
                           'viewWindow':{'max':300,'min':0}}
                        };
 
-        // Instantiate and draw our chart, passing in some options
+        // Instantiate and draw chart, passing in options
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_one'));
         chart.draw(data, options);
       }
@@ -162,7 +164,7 @@
                        'height':200
                        };
 
-        // Instantiate and draw our chart, passing in some options
+        // Instantiate and draw chart, passing in options
         var chart = new google.visualization.PieChart(document.getElementById('chart_div_two'));
         chart.draw(data, options);
       }
@@ -191,7 +193,7 @@
                        'height':200
                        };
 
-        // Instantiate and draw our chart, passing in some options
+        // Instantiate and draw chart, passing in options
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_three'));
         chart.draw(data, options);
       }

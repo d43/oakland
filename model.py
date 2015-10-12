@@ -133,7 +133,7 @@ def clusters(conn):
 
 	#columns = ['total', 'q_percent', 'nv_percent', 'vbi_percent', 'vt_percent', 'v_percent', 'weekend_percent', 'workday_percent', 'evening_percent']
 
-	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count', 'weekend_percent', 'morning_percent', 'daytime_percent']
+	columns = ['q_count', 'nv_count', 'vbi_count', 'vt_count', 'v_count']
 
 	# Pull out non-index columns to pass into model
 	#columns =  pca_df.columns.tolist()[0:n_components]

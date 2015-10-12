@@ -6,29 +6,43 @@ import psycopg2
 from database_to_json import join_json
 from model import clusters
 
-conn_dict = {'dbname':'oakland', 'user':'danaezoule', 'host':'/tmp'}
-conn = psycopg2.connect(dbname=conn_dict['dbname'], user=conn_dict['user'], host=conn_dict['host'])
-c = conn.cursor()
 
-# When model is finalized, add a step here to import from pickled model
-# Check if model exists, if not, repull and pickle it
-# see example: safe_walk_app/safe_walk_app.py save_geo_dict
+def start_app():
+    '''
+    Input:
+    - None
 
-clus, crime_data = clusters(conn)
-map_jsons = join_json(conn, clus, crime_data)
+    Output:
+    - None
 
-# Initialize Flask App
+    Boots flask application
+    '''
+    # Initialize flask app
+    app = Flask(__name__)
 
-app = Flask(__name__)
+    # Define routes/pages and get template
+    @app.route('/')
+    @app.route('/oakland', methods=['GET'])
+    def oakland():
+        if request.method == 'GET':
+            return render_template("oakland.html",
+                                   map_jsons=map_jsons)
 
-@app.route('/')
-@app.route('/oakland', methods=['GET'])
-def oakland():
-    if request.method == 'GET':
-        return render_template("oakland.html",
-        						map_jsons = map_jsons)
+    # Boot application
+    app.run(host='127.0.0.1', port=8088, debug=True)
 
 
 if __name__ == "__main__":
+    # Connect to database
+    conn_dict = {'dbname': 'oakland', 'user': 'danaezoule', 'host': '/tmp'}
+    conn = psycopg2.connect(dbname=conn_dict['dbname'],
+                            user=conn_dict['user'], host=conn_dict['host'])
+    c = conn.cursor()
 
-    app.run(host='127.0.0.1', port=8088, debug=True)
+    # Get clusters and data (from model.py)
+    clus, crime_data = clusters(conn)
+
+    # Create geo jsons (from database_to_json.py)
+    map_jsons = join_json(conn, clus, crime_data)
+
+    start_app()

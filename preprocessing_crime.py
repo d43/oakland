@@ -6,6 +6,12 @@ from operator import itemgetter # for getting max tuple quickly
 
 def pre_process(cdf):
 	'''
+	Input:
+	- pandas dataframe
+
+	Output:
+	- None
+
 	Preprocess data:
 		Change Date type to pandas datetime
 		Add year column
@@ -21,14 +27,8 @@ def pre_process(cdf):
 		Deal with duplicate rows (pick worst crime, keep that, delete rest)
 		Create dummy variables for CrimeCat, hours, and days of week
 		Export data to csv
-
-	Input:
-	- pandas dataframe
-
-	Output:
-	- None
 	'''
-
+	# Change date type to datetime, create year column for index
 	cdf.Date = pd.to_datetime(cdf.Date)
 	cdf['year'] = pd.DatetimeIndex(cdf.Date).year
 
@@ -38,13 +38,13 @@ def pre_process(cdf):
 	cdf['weekend'] = cdf.day_of_week.isin([5,6])*1
 
 	# Group crimes across segments of the day. Midnight (hr 0) here is excluded as it's used
-	# by OPD (Oakland Police Dept) when time is unknown. Determined by spike in hr_0 across
-	# all crime types.
+	# by OPD (Oakland Police Dept) when time is unknown. Determined by observing similar spike
+	# in hr_0 across all crime types.
 	cdf['morning'] = cdf.hour.isin([1, 2, 3, 4, 5, 6, 7])*1
 	cdf['workday'] = cdf.hour.isin([8, 9, 10, 11, 12, 13, 14, 15])*1
 	cdf['evening'] = cdf.hour.isin([16, 17, 18, 19, 20, 21, 22, 23])*1
 
-	# Drop unused text columns
+	# Drop text columns
 	cdf.drop(['Idx', 'OIdx', 'CType', 'Desc', 'Beat', 'Addr', 'Src', 'UCR', 'Statute'], axis=1, inplace=True)
 
 	# Remove two categories with inconsistent reporting over time
@@ -77,7 +77,6 @@ def pre_process(cdf):
 	# For each OPR_RD with mutiple entries, identify the entry with worst crime
 	# violent > vehicle_theft > vehicle_break_in > nonviolent > quality
 	# And drop other rows
-
 	drop_me = []
 	for crime_id in duplicates:
 		l = []

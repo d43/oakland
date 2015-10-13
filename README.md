@@ -25,7 +25,7 @@ Count of each crime type occurring in the morning, day, and evening
 <p>
 The area/year rows were normalized for all features. I looked at the variance across the set, and found that the count and distribution in time of quality crimes were the most descriptive of changes between neighborhoods, followed by violent crimes.
 <p>
-The engineered features over weekend, morning, day, and evening did not segment the data in a meaningful way. These features were kept for use in the data visualization and future efforts. PCA was also attempted, but trade off in lost interpretibility was not feasible for this application.
+The engineered features over weekend, morning, day, and evening did not segment the data in a meaningful way. These features were kept for use in the data visualization and future efforts. PCA was also attempted, but the trade off of lost interpretibility was too great for this application.
 <p>
 I then passed 2009 data into kMeans (initialized with kmeans++) and compared the within group sum of squares for values of k from 1-12, which told me that five neighborhoods could be separated in the data (see types above). I re-initialized my kMeans for many random seeds and observed that the Tranquil, Violent, and Auto Break In neighborhoods were robust to initialization. The remaining two clusters changed between seeds. I picked a seed to define my last two clusters on their ability to be separated geographically.  
 ## Code Walk Through:

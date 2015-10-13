@@ -2,7 +2,6 @@ import psycopg2
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 
 def clusters(conn):
 	'''

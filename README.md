@@ -13,7 +13,6 @@ Transitional - Areas with high larceny, medium violence, and medium levels of qu
 Violent - Areas characterized by high assaults and quality crimes.  
 Auto Break Ins - Areas with very large spikes in auto break ins.  
 <p>
-Website to be launched in early November, 2015!
 
 ## Process:
 Crime incidents tagged with latitude/longitudes, timestamps, and crime categories were loaded into a postGres database with postGIS (geospatial capacity). I aggregated these incidents by US census block-group shape files and by year. My feature table had a row for each distinct area/year combination.
